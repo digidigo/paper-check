@@ -3,16 +3,12 @@ import { useClaimedByTokenId } from "../hooks";
 
 function CheckPaper() {
     let input = 697; // doing this next..
-    let checkIsClaimedByTokenId = function() {
-      let v = useClaimedByTokenId(input);
-      console.log(v);
-      return v;
-    }
 
+  let v = useClaimedByTokenId(input);
   return (
     <Flex direction="column" align="center" mt="4">
       <Text color="white" fontSize="8xl"></Text>
-      <Button colorScheme="teal" size="lg" onClick={checkIsClaimedByTokenId}>
+      <Button colorScheme="teal" size="lg" onClick={useClaimedByTokenId}>
         Check Paper
       </Button>
     </Flex>

@@ -9,14 +9,14 @@ const paperContractInterface = new ethers.utils.Interface(paperContractAbi);
 const paperContract = new Contract(paperContractAddress, paperContractInterface);
 
 
-export function useClaimedByTokenId() {
+export function useClaimedByTokenId(...args) {
   const count =
     useContractCall({
       abi: paperContractInterface,
       address: paperContractAddress,
       method: "claimedByTokenId",
-      args: [],
+      args: args,
     }) ?? [];
-  console.log(count);
+  console.log(" claimedByTokenId (" + count + ")");
   return count;
 }
