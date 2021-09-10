@@ -1,4 +1,4 @@
-import { Flex, Text, Button,Grid } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 import { useClaimedByTokenId } from "../hooks";
 import axios from 'axios';
 import { ethers } from "ethers";
