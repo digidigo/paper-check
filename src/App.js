@@ -4,7 +4,7 @@ import Layout from "./components/Layout";
 import ConnectButton from "./components/ConnectButton";
 import AccountModal from "./components/AccountModal";
 import EtherBalance from "./components/EtherBalance"
-import CheckPaper from "./components/CheckPaper"
+import {AllTokens} from "./components/AllTokens"
 import "@fontsource/inter";
 
 function App() {
@@ -14,7 +14,7 @@ function App() {
       <Layout>
         <ConnectButton handleOpenModal={onOpen} />
         <AccountModal isOpen={isOpen} onClose={onClose} />
-        <CheckPaper />
+        <AllTokens/>
       </Layout>
     </ChakraProvider>
   );
