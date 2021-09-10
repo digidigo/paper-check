@@ -11,7 +11,7 @@ export function AllTokens(){
 
   var rows = [];
 
-  for (var i = 600; i < 1000; i++) {
+  for (var i = 0; i < 1000; i++) {
     rows.push(CheckPaper({tokenId: i}));
   }
   var temp = [];
@@ -21,7 +21,7 @@ export function AllTokens(){
 
   console.log("How many are unclaimed:" + rows.length)
   return(
-    <Grid templateColumns="repeat(20, 1fr)" rowGap={1} gap={1} >
+    <Grid templateColumns="repeat(20, 1fr)" rowGap={2} gap={2} >
     {rows}
     </Grid>
   )

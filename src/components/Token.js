@@ -14,14 +14,14 @@ export default function CheckPaper(props) {
       console.log("Checking OpenSea",props.tokenId);
 
       axios.get(`https://api.opensea.io/api/v1/assets?token_ids=${tokenId}&asset_contract_address=${address}&order_direction=desc&offset=0&limit=20`).then(function(openseaResult){
-          console.log(openseaResult);
+          //console.log(openseaResult);
           if (openseaResult.data.assets[0].sell_orders) {
             let p = openseaResult.data.assets[0].sell_orders[0].current_price;
             console.log('Price is:', ethers.utils.formatEther(p), 'ETH');
             setPrice(Number(ethers.utils.formatEther(p)).toFixed(1));
           } else {
             setPrice('x');
-            console.log('Loot is not for sale');
+            console.log('DWL is not for sale');
           }
       });
 
