@@ -11,7 +11,7 @@ export function AllTokens(){
 
   var rows = [];
 
-  for (var i = 0; i < 8000; i++) {
+  for (var i = 600; i < 1000; i++) {
     rows.push(CheckPaper({tokenId: i}));
   }
   var temp = [];

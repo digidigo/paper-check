@@ -9,7 +9,7 @@ import { DAppProvider } from "@usedapp/core";
 
 ReactDOM.render(
   <React.StrictMode>
-    <DAppProvider config={{}}>
+    <DAppProvider config={{pollingInterval: 30000}}>
       <App />
     </DAppProvider>
   </React.StrictMode>,

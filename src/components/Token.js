@@ -7,7 +7,7 @@ import { useState } from "react";
 
 export default function CheckPaper(props) {
   const [price, setPrice] = useState("");
-
+  //setPrice('.');
   function CheckOpenSea(tokenId){
     try {
       let address = '0x8707276df042e89669d69a177d3da7dc78bd8723';
@@ -18,7 +18,7 @@ export default function CheckPaper(props) {
           if (openseaResult.data.assets[0].sell_orders) {
             let p = openseaResult.data.assets[0].sell_orders[0].current_price;
             console.log('Price is:', ethers.utils.formatEther(p), 'ETH');
-            setPrice(ethers.utils.formatEther(p));
+            setPrice(Number(ethers.utils.formatEther(p)).toFixed(1));
           } else {
             setPrice('x');
             console.log('Loot is not for sale');
@@ -35,7 +35,7 @@ export default function CheckPaper(props) {
   if(v.toString() === 'false') {
     CheckOpenSea(props.tokenId);
     return (
-        <Text color="white" fontSize="1xl" key={props.tokenId}>{price}</Text>
+        <Text color="white" fontSize="1m" key={props.tokenId}>{price || '.'}</Text>
     );
   } else {
     return null;
