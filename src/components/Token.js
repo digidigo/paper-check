@@ -33,7 +33,11 @@ export default function CheckPaper(props) {
 
   let v = useClaimedByTokenId(props.tokenId);
   if(v.toString() === 'false') {
-    CheckOpenSea(props.tokenId);
+    if(price){
+     console.log("Skipping OS for ", props.tokenId);
+   } else {
+     CheckOpenSea(props.tokenId);
+   }
     return (
         <Text color="white" fontSize="1m" key={props.tokenId}>{price || '.'}</Text>
     );
