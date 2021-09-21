@@ -31,9 +31,8 @@ export default function CheckPaper(props) {
 
   }
 
-  let v = useClaimedByTokenId(props.tokenId);
-  if(v.toString() === 'false') {
-    if(price){
+
+  if(price){
      console.log("Skipping OS for ", props.tokenId);
    } else {
      CheckOpenSea(props.tokenId);
@@ -41,7 +40,19 @@ export default function CheckPaper(props) {
     return (
         <Text color="white" fontSize="1m" key={props.tokenId}>{price || '.'}</Text>
     );
-  } else {
-    return null;
-  }
+
+
+  // let v = useClaimedByTokenId(props.tokenId);
+  // if(v.toString() === 'false') {
+  //   if(price){
+  //    console.log("Skipping OS for ", props.tokenId);
+  //  } else {
+  //    CheckOpenSea(props.tokenId);
+  //  }
+  //   return (
+  //       <Text color="white" fontSize="1m" key={props.tokenId}>{price || '.'}</Text>
+  //   );
+  // } else {
+  //   return null;
+  // }
 }
