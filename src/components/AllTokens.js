@@ -12,44 +12,80 @@ import React, { Component } from 'react';
 export class AllTokens extends React.Component {
   state = {
     numChildren: 0,
-    prices: {}
+    prices: {},
+    currentTokenId: 0,
+    ready: false
   }
 
-
+  setReady = () => {
+    this.state.numChildren = Object.keys(this.state.prices).length;
+    console.log("Ready:",this.state.numChildren);
+    this.state.ready = true;
+    this.setState(this.state);
+  }
 
   constructor () {
     super();
-    this.startToken = 6430;
+    this.startToken = 0;
     this.endToken = 8000;
+    this.state.currentTokenId = this.startToken;
+    this.state.ready = false;
   }
 
   render () {
     const children = [];
 
-    for (var i = 0; i < this.state.numChildren; i += 1) {
-      children.push(<ChildComponent key={i} tokenId={i + this.startToken} price={this.state.prices[i + this.startToken]} />);
-    };
+    // for (var i = 0; i < this.state.numChildren; i += 1) {
+    //   children.push(<ChildComponent key={i} tokenId={i + this.startToken} price={this.state.prices[i + this.startToken]} />);
+    // };
+    console.log("rendering", this.state.numChildren);
+    var that = this;
+    if( this.state.ready ){
+      Object.keys(this.state.prices).forEach(function (tokenId) {
+        console.log("Rendering Child for ", tokenId);
+        children.push(<ChildComponent key={tokenId} tokenId={tokenId} price={that.state.prices[tokenId]} />);
+      })
+    }
 
+    var duration = (new Date() - this.state.startDate ) / 1000;
+    var totalProcessed = this.state.currentTokenId;
+    var speed = duration / totalProcessed;
+    var totalLeft = (this.endToken - this.state.currentTokenId)/60;
+    //console.log("Speed ",this.endToken);
+
+    var timeLeft = totalLeft / speed ;
+    timeLeft = Math.floor( timeLeft );
+    duration = Math.floor( duration);
     return (
       <ParentComponent addChild={this.startChecking}>
+      <Text color="white" fontSize="1m">TID : {this.state.currentTokenId}</Text>
+      <Text color="white" fontSize="1m">FS : {Object.keys(this.state.prices).length}</Text>
+      <Text color="white" fontSize="1m">{duration} : {timeLeft}</Text>
         {children}
       </ParentComponent>
     );
   }
 
-  onAddChild = () => {
-    this.setState({
-      numChildren: this.state.numChildren + 1
-    });
-    this.CheckOpenSea(this.state.numChildren + this.startToken);
+  // onAddChild = () => {
+  //   this.setState({
+  //     numChildren: this.state.numChildren + 1
+  //   });
+  //   this.CheckOpenSea(this.state.numChildren + this.startToken);
+  // }
+  checkNext = () => {
+    this.state.currentTokenId = this.state.currentTokenId + 1;
+    this.setState(this.state);
+    this.CheckOpenSea();
   }
 
   startChecking = () => {
-    this.CheckOpenSea(this.state.numChildren + this.startToken);
+    this.CheckOpenSea();
+    this.state.startDate = new Date();
   }
 
-   CheckOpenSea = function(tokenId){
+   CheckOpenSea = function(){
      var that = this;
+     let tokenId = that.state.currentTokenId;
      console.log(tokenId, "Checking OpenSea");
 
      if( tokenId >= this.startToken && tokenId <= this.endToken  ){
@@ -63,22 +99,27 @@ export class AllTokens extends React.Component {
               let price;
               try {
                  price = Number(ethers.utils.formatEther(p)).toFixed(1);
+                 if(price > 999){
+                   price = 999;
+                 }
               } catch {
-                 price = Number(99999);
+                 price = Number(999);
               }
               console.log(tokenId, ' Price is:', price, 'ETH ',openseaResult.data.assets[0].sell_orders[0] );
 
               that.state.prices[tokenId] = price;
             } else {
               console.log(tokenId, ' DWL is not for sale ');
-              that.state.prices[tokenId] = '.';
+              //that.state.prices[tokenId] = '.';
             }
-            setTimeout(that.onAddChild, 0.5 * 1000)
+            setTimeout(that.checkNext, 0.1 * 1000)
         });
 
       } catch (error) {
         console.error(error);
       }
+    } else {
+      that.setReady();
     }
   }
 }
