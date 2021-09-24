@@ -5,11 +5,13 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { DAppProvider } from "@usedapp/core";
 
-
+const config = {
+  pollingInterval: 30000000000
+}
 
 ReactDOM.render(
   <React.StrictMode>
-    <DAppProvider config={{pollingInterval: 3000000}}>
+    <DAppProvider config={config}>
       <App />
     </DAppProvider>
   </React.StrictMode>,

@@ -17,6 +17,6 @@ export function useClaimedByTokenId(...args) {
       method: "claimedByTokenId",
       args: args,
     }) ?? [];
-  console.log(" claimedByTokenId (" + count + ")");
+  //console.log(" claimedByTokenId (" + count + ")");
   return count;
 }

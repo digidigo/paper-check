@@ -8,44 +8,26 @@ import axios from 'axios';
 import { ethers } from "ethers";
 import React, { Component } from 'react';
 
-// export function AllTokens(){
-//
-//   var rows = [];
-//
-//   for (var i = 0; i < 500; i++) {
-//     rows.push(CheckPaper({tokenId: i}));
-//   }
-//   var temp = [];
-//   for(let i of rows)
-//     i && temp.push(i)
-//   rows = temp;
-//
-//   console.log("How many are unclaimed:" + rows.length)
-//   return(
-//     <Grid templateColumns="repeat(20, 1fr)" rowGap={2} gap={2} >
-//     {rows}
-//     </Grid>
-//   )
-// }
-
-
-
 
 export class AllTokens extends React.Component {
   state = {
-    numChildren: 0
+    numChildren: 0,
+    prices: {}
   }
+
+
 
   constructor () {
     super();
-    this.state.prices = {};
+    this.startToken = 6430;
+    this.endToken = 8000;
   }
 
   render () {
     const children = [];
 
     for (var i = 0; i < this.state.numChildren; i += 1) {
-      children.push(<ChildComponent key={i} number={i} price={this.state.prices[i]} />);
+      children.push(<ChildComponent key={i} tokenId={i + this.startToken} price={this.state.prices[i + this.startToken]} />);
     };
 
     return (
@@ -59,31 +41,39 @@ export class AllTokens extends React.Component {
     this.setState({
       numChildren: this.state.numChildren + 1
     });
-    this.CheckOpenSea(this.state.numChildren);
+    this.CheckOpenSea(this.state.numChildren + this.startToken);
   }
 
   startChecking = () => {
-    this.CheckOpenSea(this.state.numChildren);
+    this.CheckOpenSea(this.state.numChildren + this.startToken);
   }
 
    CheckOpenSea = function(tokenId){
      var that = this;
-     if(tokenId < 8000 ){
+     console.log(tokenId, "Checking OpenSea");
+
+     if( tokenId >= this.startToken && tokenId <= this.endToken  ){
       try {
         let address = '0x8707276df042e89669d69a177d3da7dc78bd8723';
-        console.log(tokenId, "Checking OpenSea");
 
         axios.get(`https://api.opensea.io/api/v1/assets?token_ids=${tokenId}&asset_contract_address=${address}&order_direction=desc&offset=0&limit=20`).then(function(openseaResult){
             //console.log(openseaResult);
             if (openseaResult.data.assets[0] !== undefined && openseaResult.data.assets[0].sell_orders) {
               let p = openseaResult.data.assets[0].sell_orders[0].current_price;
-              console.log(tokenId, ' Price is:', ethers.utils.formatEther(p), 'ETH ' );
-              that.state.prices[tokenId] = Number(ethers.utils.formatEther(p)).toFixed(1);
+              let price;
+              try {
+                 price = Number(ethers.utils.formatEther(p)).toFixed(1);
+              } catch {
+                 price = Number(99999);
+              }
+              console.log(tokenId, ' Price is:', price, 'ETH ',openseaResult.data.assets[0].sell_orders[0] );
+
+              that.state.prices[tokenId] = price;
             } else {
               console.log(tokenId, ' DWL is not for sale ');
-              that.state.prices[tokenId] = 'x';
+              that.state.prices[tokenId] = '.';
             }
-            setTimeout(that.onAddChild, 1.0*1000)
+            setTimeout(that.onAddChild, 0.5 * 1000)
         });
 
       } catch (error) {
@@ -102,18 +92,54 @@ const ParentComponent = props => (
     bg="gray.800"
   >
 
-  <Text color="white" fontSize="1m" href="#" onClick={props.addChild}>Add Another Child Component</Text>
+  <Button  fontSize="1m" href="#" onClick={props.addChild}>Start</Button>
   <Grid templateColumns="repeat(20, 1fr)" rowGap={2} gap={2} >
       {props.children}
    </Grid>
    </Flex>
 );
 
-const ChildComponent = props =>
-(
-  <Link href={"https://opensea.io/assets/0x8707276df042e89669d69a177d3da7dc78bd8723/" + props.number} isExternal>
-  <Text color="white" fontSize="1m">{props.price}</Text> <ExternalLinkIcon mx="2px" />
-  </Link>
-)
+// class ChildComponent extends React.Component
+// {
+//
+//
+//     render(){
+//       let v = useClaimedByTokenId(this.props.number);
+//       if(v.toString() === 'false') {
+//         this.state.claimed = false;
+//       } else {
+//         this.state.claimed = true;
+//       }
+//       return (<Link href={"https://opensea.io/assets/0x8707276df042e89669d69a177d3da7dc78bd8723/" + this.props.number} isExternal>
+//       <Text color="white" fontSize="1m">{this.props.price}</Text> <ExternalLinkIcon mx="2px" />
+//       </Link>);
+//     }
+// }
+
+function areEqual(prevProps, nextProps) {
+  //console.log("Callind are Equal on ", prevProps, nextProps);
+  return true;
+}
+const ChildComponent = React.memo(function ChildComponent(props) {
+
+  let v = useClaimedByTokenId(props.tokenId);
+  let claimed = v.toString() !== 'false';
+  //console.log(props.tokenId," Claimed ", claimed, " Price", props.price);
+  if(props.price > 0){
+    console.log(props.tokenId," Claimed ", claimed, " Price", props.price);
+  }
+
+  if(!claimed && props.price < 0.3){
+    console.log(props.tokenId," YAY : Claimed ", claimed, " Price", props.price);
+  }
+  let color = "white"
+  if(!claimed){
+    color = "blue";
+  }
+  return (
+  <Link href={"https://opensea.io/assets/0x8707276df042e89669d69a177d3da7dc78bd8723/" + props.tokenId} isExternal>
+  <Text color={color} fontSize="1m">{props.price} {claimed}</Text> <ExternalLinkIcon mx="2px" />
+  </Link>);
+},areEqual);
 
 export default AllTokens;
